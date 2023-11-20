@@ -53,26 +53,12 @@ if err!=nil{
     http.Error(w,"fail to read file",http.StatusInternalServerError)
     return
 }
-
-
-// file, _, err := r.FormFile("file")
-//     if err != nil {
-//         http.Error(w, "Failed to get file from form data", http.StatusBadRequest)
-//         return
-//     }
-//     defer file.Close()
-//     var fileContent bytes.Buffer
-//     _, err = io.Copy(&fileContent, file)
-//     if err != nil {
-//         http.Error(w, "Failed to read file", http.StatusInternalServerError)
-//         return
-//     }
-    
+   
 
 
     routines,_:=strconv.Atoi(Sroutines)
 
-    cmd.ProcessFile(BufFile.String() ,routines)
+    cmd.ProcessFile(BufFile.String(),routines)
 
    
 }
