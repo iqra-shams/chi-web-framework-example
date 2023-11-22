@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-"github.com/golang-jwt/jwt"
+
+	"github.com/golang-jwt/jwt"
 	// "bytes"
 	// "io"
 	// "strconv"
 	// "github.com/iqra-shams/chi/cmd"
 )
-
 
 var (
 	secretKey = []byte("secret -key")
@@ -42,6 +42,7 @@ type ResponseData struct {
 	ExecutionTime string `json:"ExecutionTime"`
 	Routines      int    `json:"Number_of_Routines"`
 }
+
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var credentials Credentials
 	err := json.NewDecoder(r.Body).Decode(&credentials)
@@ -82,10 +83,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
-func Restricted(w http.ResponseWriter, r *http.Request){
-	cookie, err:= r.Cookie("token")
+func Restricted(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("token")
 	if err != nil {
-		if err== http.ErrNoCookie{
+		if err == http.ErrNoCookie {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
@@ -93,23 +94,23 @@ func Restricted(w http.ResponseWriter, r *http.Request){
 		return
 	}
 	tokenStr := cookie.Value
-	claims:= &Claims{}
-	tkn,err :=jwt.ParseWithClaims(tokenStr, claims, func(t *jwt.Token) (interface{}, error) {
+	claims := &Claims{}
+	tkn, err := jwt.ParseWithClaims(tokenStr, claims, func(t *jwt.Token) (interface{}, error) {
 		return secretKey, nil
 	})
-	if err != nil{
-		if err==jwt.ErrSignatureInvalid{
+	if err != nil {
+		if err == jwt.ErrSignatureInvalid {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-w.WriteHeader(http.StatusBadRequest)
-return
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
-	if !tkn.Valid{
+	if !tkn.Valid {
 		w.WriteHeader(http.StatusUnauthorized)
-return
+		return
 	}
-	w.Write([]byte(fmt.Sprintf("hello,%s",claims.Username)))
+	w.Write([]byte(fmt.Sprintf("hello,%s", claims.Username)))
 	// start := time.Now()
 
 	// // err := r.ParseMultipartForm(1000 << 20)
@@ -152,7 +153,5 @@ return
 	// w.Header().Set("Content-Type", "application/json")
 	// json.NewEncoder(w).Encode(responseData)
 	// fmt.Printf("Execution time: %v \n", executiontime)
-	
-	
-}
 
+}
