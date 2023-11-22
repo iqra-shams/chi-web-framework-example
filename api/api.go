@@ -8,8 +8,6 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-
-	"github.com/golang-jwt/jwt"
 	"github.com/iqra-shams/chi/cmd"
 )
 
@@ -68,42 +66,89 @@ func HandlerPostReq(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Execution time: %v \n", executiontime)
 }
 
-func ProtectedHandler(w http.ResponseWriter, r *http.Request) {
+// func ProtectedHandler(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Content-Type", "application/json")
+// 	w.Header().Set("Content-Type", "application/json")
 
-	tokenString := r.Header.Get("Authorization")
-	if tokenString == "" {
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprint(w, "Missing authorization header")
-		return
-	}
-	tokenString = tokenString[len("Bearer "):]
+// 	tokenString := r.Header.Get("Authorization")
+// 	if tokenString == "" {
+// 		w.WriteHeader(http.StatusUnauthorized)
+// 		fmt.Fprint(w, "Missing authorization header")
+// 		return
+// 	}
+// 	tokenString = tokenString[len("Bearer "):]
 
-	err := verifyToken(tokenString)
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprint(w, "Invalid token")
-		return
-	}
+// 	err := verifyToken(tokenString)
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusUnauthorized)
+// 		fmt.Fprint(w, "Invalid token")
+// 		return
+// 	}
 
-	fmt.Fprint(w, "Welcome to the the protected area")
+// 	fmt.Fprint(w, "Welcome to the the protected area")
 
-}
+// }
 
-func verifyToken(tokenString string) error {
-	token, err := jwt.Parse(tokenString,
-		func(token *jwt.Token) (interface{}, error) {
-			return jwtkey, nil
-		})
+// func verifyToken(tokenString string) error {
+// 	token, err := jwt.Parse(tokenString,
+// 		func(token *jwt.Token) (interface{}, error) {
+// 			return jwtkey, nil
+// 		})
 
-	if err != nil {
-		return err
-	}
+// 	if err != nil {
+// 		return err
+// 	}
 
-	if !token.Valid {
-		return fmt.Errorf("invalid token")
-	}
+// 	if !token.Valid {
+// 		return fmt.Errorf("invalid token")
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
+
+// package api
+
+// import (
+// 	"fmt"
+
+// 	"net/http"
+
+// 	"github.com/golang-jwt/jwt"
+// )
+
+
+// var (
+// 	secretKey = []byte("secret -key")
+// )
+// func ProtectedHandler(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Set("Content-Type", "application/json")
+// 	tokenString := r.Header.Get("Authorization")
+// 	if tokenString == "" {
+// 		w.WriteHeader(http.StatusUnauthorized)
+// 		fmt.Fprint(w, "Missing authorization header")
+// 		return
+// 	}
+// 	tokenString = tokenString[len("Bearer "):]
+
+// 	err := verifyToken(tokenString)
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusUnauthorized)
+// 		fmt.Fprint(w, "Invalid token")
+// 		return
+// 	}
+// 	fmt.Fprint(w, "Welcome to the the protected area")
+
+// }
+
+// func verifyToken(tokenString string) error {
+// 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+// 		return secretKey, nil
+// 	})
+// 	if err != nil {
+// 		return err
+// 	}
+// 	if !token.Valid {
+// 		return fmt.Errorf("Invalid token")
+// 	}
+// 	return nil
+// }
