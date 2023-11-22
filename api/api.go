@@ -9,9 +9,11 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/golang-jwt/jwt"
 	"github.com/iqra-shams/chi/cmd"
 )
 
+var jwtkey = []byte("secret-key")
 type ResponseData struct {
 	Lines         int    `json:"Number_of_Lines"`
 	Words         int    `json:"Number_of_Words"`
@@ -23,6 +25,7 @@ type ResponseData struct {
 
 func HandlerPostReq(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
+
 	err := r.ParseMultipartForm(1000 << 20)
 	if err != nil {
 		http.Error(w, "fail to parse form", http.StatusInternalServerError)
@@ -63,4 +66,44 @@ func HandlerPostReq(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(responseData)
 	fmt.Printf("Execution time: %v \n", executiontime)
+}
+
+func ProtectedHandler(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	tokenString := r.Header.Get("Authorization")
+	if tokenString == "" {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprint(w, "Missing authorization header")
+		return
+	}
+	tokenString = tokenString[len("Bearer "):]
+
+	err := verifyToken(tokenString)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprint(w, "Invalid token")
+		return
+	}
+
+	fmt.Fprint(w, "Welcome to the the protected area")
+
+}
+
+func verifyToken(tokenString string) error {
+	token, err := jwt.Parse(tokenString,
+		func(token *jwt.Token) (interface{}, error) {
+			return jwtkey, nil
+		})
+
+	if err != nil {
+		return err
+	}
+
+	if !token.Valid {
+		return fmt.Errorf("invalid token")
+	}
+
+	return nil
 }
